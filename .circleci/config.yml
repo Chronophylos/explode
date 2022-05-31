@@ -64,8 +64,11 @@ jobs:
         name: Show rustup home
         command: rustup show home
     - run:
+        name: Show selected toolchain
+        command: rustup show
+    - run:
         name: Install nightly Rust
-        command: rustup update
+        command: rustup install nightly
     - save_rustup_cache
 
   lint_commit_message:
