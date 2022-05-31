@@ -130,6 +130,7 @@ workflows:
   commit:
     jobs:
     - setup
+    - install_nightly_rust
     - lint_commit_message: { requires: [setup] }
     - test: { requires: [install_nightly_rust] }
     - format: { requires: [install_nightly_rust] }
