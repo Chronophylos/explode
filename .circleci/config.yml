@@ -18,7 +18,7 @@ commands:
         name: Saving node_module cache
         key: package-lock-{{ checksum "package-lock.json" }}
         paths:
-        - node_modules
+        - ~/.npm
   restore_rustup_cache:
     steps:
     - restore_cache:
@@ -54,6 +54,10 @@ jobs:
         name: Install dependencies
         command: npm install
     - save_node_module_cache
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+        - node_modules
 
   install_nightly_rust:
     <<: *default
@@ -72,7 +76,8 @@ jobs:
     <<: *default
     steps:
     - checkout
-    - restore_node_module_cache
+    - attach_workspace:
+      at: ~/project
     - run:
         name: Define environment variable with lastest commit's message
         command: |
