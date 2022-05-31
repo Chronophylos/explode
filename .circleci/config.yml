@@ -117,7 +117,7 @@ jobs:
         path: fixed-report.xml
     
   format:
-    <<: *default-small
+    <<: *default_medium
     steps:
     - checkout
     - restore_cargo_cache
