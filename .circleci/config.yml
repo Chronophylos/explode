@@ -90,10 +90,8 @@ jobs:
         name: Install nextest
         command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
     - run:
-        command: file /usr/bin/circleci-junit-fix
-    # - run:
-    #     name: Install circleci-junit-fix
-    #     command: curl -sSL https://github.com/conradludgate/circleci-junit-fix/releases/download/v0.1.0/circleci-junit-fix-v0.1.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=/usr/bin
+        name: Install circleci-junit-fix
+        command: curl -sSL https://github.com/conradludgate/circleci-junit-fix/releases/download/v0.1.0/circleci-junit-fix-v0.1.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=~/.local/bin
     - restore_cargo_cache
     - restore_rustup_cache
     - run:
