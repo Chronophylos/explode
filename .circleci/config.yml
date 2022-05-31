@@ -96,7 +96,7 @@ jobs:
     - restore_rustup_cache
     - run:
         name: Run tests
-        command: cargo nextest run --profile ci
+        command: cargo nextest run --profile ci --color alaway
     - run:
         name: Preprocess JUnit file
         command: cat target/nextest/ci/junit.xml | circleci-junit-fix > fixed-report.xml
