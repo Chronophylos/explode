@@ -5,6 +5,11 @@ default: &default
   working_directory: ~/project
   docker:
   - image: cimg/rust:1.61-node
+default_medium: &default_medium
+  working_directory: ~/project
+  docker:
+  - image: cimg/rust:1.61-node
+  resource_class: medium
 
 commands:
   restore_node_module_cache:
@@ -46,7 +51,7 @@ commands:
 
 jobs:
   setup:
-    <<: *default
+    <<: *default_medium
     steps:
     - checkout
     - restore_node_module_cache
@@ -60,7 +65,7 @@ jobs:
         - node_modules
 
   install_nightly_rust:
-    <<: *default
+    <<: *default_medium
     steps:
     - checkout
     - restore_rustup_cache
@@ -73,7 +78,7 @@ jobs:
     - save_rustup_cache
 
   lint_commit_message:
-    <<: *default
+    <<: *default_medium
     steps:
     - checkout
     - attach_workspace:
@@ -112,7 +117,7 @@ jobs:
         path: fixed-report.xml
     
   format:
-    <<: *default
+    <<: *default-small
     steps:
     - checkout
     - restore_cargo_cache
