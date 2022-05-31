@@ -64,6 +64,9 @@ jobs:
     - run:
         name: Install nextest
         command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+    - run:
+        name: Install circleci-junit-fix
+        command: curl -sSL https://github.com/conradludgate/circleci-junit-fix/releases/download/v0.1.0/circleci-junit-fix-v0.1.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=/usr/bin
     - restore_cache:
         key: cargo-lock-{{ checksum "Cargo.lock" }}
     - restore_cache:
@@ -71,10 +74,15 @@ jobs:
     - run:
         name: Run tests
         command: cargo nextest run --profile ci
+    - run:
+        name: Preprocess JUnit file
+        command: cat target/nextest/ci/junit.xml | circleci-junit-fix > fixed-report.xml
     - save_cache:
         key: cargo-lock-{{ checksum "Cargo.lock" }}
         paths:
           - ~/.cargo
+    - store_test_results:
+        path: fixed-report.xml
     
   format:
     <<: *default
