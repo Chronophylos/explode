@@ -25,6 +25,23 @@ jobs:
         paths:
         - node_modules
 
+  install_nightly_rust:
+    <<: *default
+    steps:
+    - checkout
+    - restore_cache:
+        key: rust-{{ checksum "rust-toolchain.toml" }}
+    - run:
+        name: Show rustup home
+        command: rustup show home
+    - run:
+        name: Install nightly Rust
+        command: rustup update
+    - save_cache:
+        key: rust-{{ checksum "rust-toolchain.toml" }}
+        paths:
+        - /root/.rustup
+
   lint_commit_message:
     <<: *default
     steps:
@@ -49,16 +66,64 @@ jobs:
         command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
     - restore_cache:
         key: cargo-lock-{{ checksum "Cargo.lock" }}
+    - restore_cache:
+        key: rust-{{ checksum "rust-toolchain.toml" }}
     - run:
         name: Run tests
         command: cargo nextest run --profile ci
     - save_cache:
         key: cargo-lock-{{ checksum "Cargo.lock" }}
         paths:
-          - /usr/local/cargo/registry
-          - target/debug/.fingerprint
-          - target/debug/build
-          - target/debug/deps
+          - ~/.cargo
+    
+  format:
+    <<: *default
+    steps:
+    - checkout
+    - restore_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+    - restore_cache:
+        key: rust-{{ checksum "rust-toolchain.toml" }}
+    - run:
+        name: Run rustfmt
+        command: cargo fmt -- --check
+    - save_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+        paths:
+          - ~/.cargo
+    
+  clippy:
+    <<: *default
+    steps:
+    - checkout
+    - restore_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+    - restore_cache:
+        key: rust-{{ checksum "rust-toolchain.toml" }}
+    - run:
+        name: Run Clippy
+        command: cargo clippy
+    - save_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+        paths:
+          - ~/.cargo
+    
+  build-release:
+    <<: *default
+    steps:
+    - checkout
+    - restore_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+    - restore_cache:
+        key: rust-{{ checksum "rust-toolchain.toml" }}
+    - run:
+        name: Build in release mode
+        command: cargo build --release
+    - save_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+        paths:
+          - ~/.cargo
+        
 
 workflows:
   version: 2
@@ -66,5 +131,8 @@ workflows:
     jobs:
     - setup
     - lint_commit_message: { requires: [setup] }
-    - test
+    - test: { requires: [install_nightly_rust] }
+    - format: { requires: [install_nightly_rust] }
+    - clippy: { requires: [install_nightly_rust] }
+    - build-release: { requires: [install_nightly_rust] }
   
