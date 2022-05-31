@@ -1,0 +1,20 @@
+[package]
+name = "explode"
+authors = ["Nikolai Zimmermann <nikolai@chronophylos.com>"]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/chronophylos/explode"
+readme = "README.md"
+
+[dependencies]
+clap = { version = "3.1.18", features = ["derive"] }
+color-eyre = { version = "0.6.1", default-features = false }
+console = "0.15.0"
+eyre = "0.6.8"
+fs_extra = "1.2.0"
+once_cell = "1.12.0"
+
+[dev-dependencies]
+assert_fs = { version = "1.0.7", features = ["color", "color-auto"] }
+predicates = { version = "2.1.1", features = ["color-auto"] }
