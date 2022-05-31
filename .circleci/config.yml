@@ -77,7 +77,7 @@ jobs:
     steps:
     - checkout
     - attach_workspace:
-      at: ~/project
+        at: ~/project
     - run:
         name: Define environment variable with lastest commit's message
         command: |
