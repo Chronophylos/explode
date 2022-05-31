@@ -102,7 +102,7 @@ jobs:
     - run:
         name: Preprocess JUnit file
         command: cat target/nextest/ci/junit.xml | circleci-junit-fix > fixed-report.xml
-    - save_rust_cache
+    - save_rustup_cache
     - store_test_results:
         path: fixed-report.xml
     
@@ -115,7 +115,7 @@ jobs:
     - run:
         name: Run rustfmt
         command: cargo fmt -- --check
-    - save_rust_cache
+    - save_rustup_cache
     
   clippy:
     <<: *default
@@ -126,7 +126,7 @@ jobs:
     - run:
         name: Run Clippy
         command: cargo clippy
-    - save_rust_cache
+    - save_rustup_cache
     
   build-release:
     <<: *default
@@ -137,7 +137,7 @@ jobs:
     - run:
         name: Build in release mode
         command: cargo build --release
-    - save_rust_cache
+    - save_rustup_cache
         
 
 workflows:
