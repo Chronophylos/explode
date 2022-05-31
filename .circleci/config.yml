@@ -1,21 +1,23 @@
-version: 2
-defaults: &defaults
+version: 2.1
+orbs: 
+  rust: circleci/rust@1.6.0
+default: &default
   working_directory: ~/project
   docker:
-  - image: cimg/node:current
+  - image: cimg/rust:1.61-node
 
 jobs:
   setup:
-    <<: *defaults
+    <<: *default
     steps:
     - checkout
     - restore_cache:
-        key: lock-{{ checksum "package-lock.json" }}
+        key: package-lock-{{ checksum "package-lock.json" }}
     - run:
         name: Install dependencies
         command: npm install
     - save_cache:
-        key: lock-{{ checksum "package-lock.json" }}
+        key: package-lock-{{ checksum "package-lock.json" }}
         paths:
         - node_modules
     - persist_to_workspace:
@@ -24,7 +26,7 @@ jobs:
         - node_modules
 
   lint_commit_message:
-    <<: *defaults
+    <<: *default
     steps:
     - checkout
     - attach_workspace:
@@ -37,6 +39,26 @@ jobs:
     - run:
         name: Lint commit message
         command: echo "$COMMIT_MESSAGE" | npx commitlint
+    
+  test:
+    <<: *default
+    steps:
+    - checkout
+    - run:
+        name: Install nextest
+        command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+    - restore_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+    - run:
+        name: Run tests
+        command: cargo nextest run --profile ci
+    - save_cache:
+        key: cargo-lock-{{ checksum "Cargo.lock" }}
+        paths:
+          - /usr/local/cargo/registry
+          - target/debug/.fingerprint
+          - target/debug/build
+          - target/debug/deps
 
 workflows:
   version: 2
@@ -44,3 +66,5 @@ workflows:
     jobs:
     - setup
     - lint_commit_message: { requires: [setup] }
+    - test
+  
