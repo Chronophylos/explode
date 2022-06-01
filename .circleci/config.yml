@@ -45,12 +45,12 @@ commands:
     steps:
     - restore_cache:
         name: Restoring cargo cache
-        key: cargo-lock-v1-{{ checksum "Cargo.lock" }}
+        key: cargo-lock-v2-{{ checksum "Cargo.lock" }}
   save_cargo_cache:
     steps:
     - save_cache:
         name: Saving cargo cache
-        key: cargo-lock-v1-{{ checksum "Cargo.lock" }}
+        key: cargo-lock-v2-{{ checksum "Cargo.lock" }}
         paths:
           - ~/.cargo
 
