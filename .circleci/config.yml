@@ -64,19 +64,6 @@ jobs:
         paths:
         - node_modules
 
-  install_nightly_rust:
-    <<: *default_medium
-    steps:
-    - checkout
-    - restore_rustup_cache
-    - run:
-        name: Show rustup home
-        command: rustup show home
-    - run:
-        name: Show selected toolchain
-        command: rustup show
-    - save_rustup_cache
-
   lint_commit_message:
     <<: *default_medium
     steps:
@@ -155,10 +142,9 @@ workflows:
   commit:
     jobs:
     - setup
-    - install_nightly_rust
     - lint_commit_message: { requires: [setup] }
-    - test: { requires: [install_nightly_rust] }
-    - format: { requires: [install_nightly_rust] }
-    - clippy: { requires: [install_nightly_rust] }
-    - build-release: { requires: [install_nightly_rust] }
+    - test
+    - format
+    - clippy
+    - build-release
   
