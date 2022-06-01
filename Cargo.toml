@@ -1,5 +1,5 @@
 [package]
-name = "explode"
+name = "explode-cli"
 authors = ["Nikolai Zimmermann <nikolai@chronophylos.com>"]
 version = "0.1.0"
 edition = "2021"
