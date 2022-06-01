@@ -1,14 +1,19 @@
 version: 2.1
 orbs: 
   rust: circleci/rust@1.6.0
+node: &node
+  working_directory: ~/project
+  docker:
+  - image: cimg/node:current
+  resource_class: medium
 default: &default
   working_directory: ~/project
   docker:
-  - image: cimg/rust:1.61-node
+  - image: cimg/rust:1.61
 default_medium: &default_medium
   working_directory: ~/project
   docker:
-  - image: cimg/rust:1.61-node
+  - image: cimg/rust:1.61
   resource_class: medium
 
 commands:
@@ -51,7 +56,7 @@ commands:
 
 jobs:
   setup:
-    <<: *default_medium
+    <<: *node
     steps:
     - checkout
     - restore_node_module_cache
@@ -78,7 +83,7 @@ jobs:
     - save_rustup_cache
 
   lint_commit_message:
-    <<: *default_medium
+    <<: *node
     steps:
     - checkout
     - attach_workspace:
