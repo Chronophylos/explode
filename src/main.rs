@@ -1,15 +1,12 @@
-#![feature(io_error_more)]
-
 use std::{
-    fs::{copy, create_dir, read_dir, remove_dir, remove_file, rename},
-    io::{ErrorKind, Write},
+    fs::{copy, create_dir, read_dir, remove_dir, remove_file},
+    io::Write,
     path::{Path, PathBuf},
 };
 
 use clap::Parser;
 use console::{Style, Term};
 use eyre::{bail, Result, WrapErr};
-use fs_extra::dir::{move_dir, CopyOptions};
 use once_cell::sync::Lazy;
 
 static PATH_STYLE: Lazy<Style> = Lazy::new(|| Style::new().blue().italic());
@@ -124,35 +121,11 @@ fn move_path(term: &mut Term, args: &Args, from: &Path, to: &Path) -> Result<()>
     }
 
     if !args.dry_run {
-        move_or_copy(from, to, args.force).wrap_err_with(|| {
-            format!(
-                "Failed to move or copy {} to {}",
-                from.display(),
-                to.display()
-            )
-        })?;
+        copy(from, to)
+            .wrap_err_with(|| format!("Failed to copy {} to {}", from.display(), to.display()))?;
+        remove_file(from)
+            .wrap_err_with(|| format!("Failed to remove previously copied {}", from.display()))?;
     }
-
-    Ok(())
-}
-
-fn move_or_copy(from: &Path, to: &Path, overwrite: bool) -> Result<()> {
-    match rename(from, to) {
-        Err(err) if err.kind() == ErrorKind::CrossesDevices => {
-            if from.is_dir() {
-                let mut options = CopyOptions::new();
-                options.overwrite = overwrite;
-                create_dir(to)?;
-                move_dir(from, to, &options)?;
-            } else {
-                copy(from, to)?;
-                remove_file(from)?;
-            }
-        }
-        result => {
-            result?;
-        }
-    };
 
     Ok(())
 }
