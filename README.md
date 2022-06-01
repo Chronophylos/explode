@@ -2,6 +2,19 @@
 
 Like `mv directory/* . && rm -r directory` but written in rust and purpose built.
 
+`explode` moves every file in a directory to the current directory and removes
+the directory.
+
+## Installation
+
+### From source
+
+```
+git clone https://github.com/Chronophylos/explode
+cd explode
+cargo install --path .
+```
+
 <br>
 
 #### License
