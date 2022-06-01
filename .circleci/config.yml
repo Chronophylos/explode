@@ -90,9 +90,6 @@ jobs:
         name: Download dependencies
         command: cargo fetch
     - run:
-        name: Install nextest
-        command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-$HOME/.cargo}/bin
-    - run:
         name: Install tools
         command: cargo install cargo-pants
     - save_cargo_cache
@@ -117,6 +114,9 @@ jobs:
     <<: *default
     steps:
     - checkout
+    - run:
+        name: Install nextest
+        command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-$HOME/.cargo}/bin
     - run:
         name: Install circleci-junit-fix
         command: |
@@ -186,4 +186,5 @@ workflows:
     - format: { requires: [install_rust] }
     - clippy: { requires: [install_rust] }
     - build: { requires: [install_rust] }
+    - pants: { requires: [install_rust] }
   
