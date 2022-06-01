@@ -189,7 +189,7 @@ jobs:
           - ~/.cargo
     - run:
         name: Run cargo pants
-        command: cargo pants --louds
+        command: cargo pants --loud
   
 
 workflows:
