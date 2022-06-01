@@ -12,12 +12,16 @@ default: &default
   - image: cimg/rust:1.61
   environment:
     CARGO_TERM_COLOR: always
+    # Fail the build if there are warnings
+    RUSTFLAGS: '-D warnings'
 default_medium: &default_medium
   working_directory: ~/project
   docker:
   - image: cimg/rust:1.61
   environment:
     CARGO_TERM_COLOR: always
+    # Fail the build if there are warnings
+    RUSTFLAGS: '-D warnings'
   resource_class: medium
 
 commands:
