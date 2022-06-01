@@ -6,6 +6,8 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/chronophylos/explode"
 readme = "README.md"
+categories = ["command-line-utilities"]
+keywords = ["explode"]
 
 [dependencies]
 clap = { version = "3.1.18", features = ["derive"] }
