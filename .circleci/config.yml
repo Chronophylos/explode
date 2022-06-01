@@ -30,14 +30,18 @@ commands:
     steps:
     - save_cache:
         name: Saving node_module cache
-        key: package-lock-v1-{{ checksum "package-lock.json" }}
+        keys:
+          - package-lock-v1-{{ checksum "package-lock.json" }}
+          - package-lock-v1-
         paths:
         - ~/.npm
   restore_rustup_cache:
     steps:
     - restore_cache:
         name: Restoring rustup cache
-        key: rust-v1-{{ checksum "rust-toolchain.toml" }}
+        keys:
+          - rust-v1-{{ checksum "rust-toolchain.toml" }}
+          - rust-v1-
   save_rustup_cache:
     steps:
     - save_cache:
@@ -49,7 +53,9 @@ commands:
     steps:
     - restore_cache:
         name: Restoring cargo cache
-        key: cargo-lock-v2-{{ checksum "Cargo.lock" }}
+        keys:
+          - cargo-lock-v2-{{ checksum "Cargo.lock" }}
+          - cargo-lock-v2-
   save_cargo_cache:
     steps:
     - save_cache:
