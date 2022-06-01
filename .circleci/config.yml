@@ -81,6 +81,15 @@ jobs:
         name: Show and install selected toolchain
         command: rustup show
     - save_rustup_cache
+    - restore_cargo_cache
+    - run:
+        name: Download dependencies
+        command: cargo fetch
+    - run:
+        name: Install tools
+        command: cargo install cargo-nextest cargo-pants
+    - save_cargo_cache
+
 
   lint_commit_message:
     <<: *node
@@ -102,9 +111,6 @@ jobs:
     steps:
     - checkout
     - run:
-        name: Install nextest
-        command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
-    - run:
         name: Install circleci-junit-fix
         command: |
           mkdir -p ~/.local/bin
@@ -117,7 +123,6 @@ jobs:
     - run:
         name: Preprocess JUnit file
         command: cat target/nextest/ci/junit.xml | circleci-junit-fix > fixed-report.xml
-    - save_cargo_cache
     - store_test_results:
         path: fixed-report.xml
     
@@ -141,7 +146,6 @@ jobs:
     - run:
         name: Run Clippy
         command: cargo --color always clippy
-    - save_cargo_cache
     
   build:
     <<: *default
@@ -152,8 +156,17 @@ jobs:
     - run:
         name: Build binary
         command: cargo --color always build --release
-    - save_cargo_cache
-        
+  
+  pants:
+    <<: *default_medium
+    steps:
+    - checkout
+    - restore_cargo_cache
+    - restore_rustup_cache
+    - run:
+        name: Run cargo pants
+        command: cargo pants --louds
+  
 
 workflows:
   version: 2
