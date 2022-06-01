@@ -177,7 +177,6 @@ jobs:
     - restore_cache:
         name: Restoring cargo pants cache
         keys:
-          - v1-cargo-pants-{{ checksum "~/.cargo/bin/cargo-pants" }}
           - v1-cargo-pants-
     - run:
         name: Install tools
