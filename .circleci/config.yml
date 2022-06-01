@@ -10,10 +10,14 @@ default: &default
   working_directory: ~/project
   docker:
   - image: cimg/rust:1.61
+  environment:
+    CARGO_TERM_COLOR: always
 default_medium: &default_medium
   working_directory: ~/project
   docker:
   - image: cimg/rust:1.61
+  environment:
+    CARGO_TERM_COLOR: always
   resource_class: medium
 
 commands:
@@ -86,8 +90,11 @@ jobs:
         name: Download dependencies
         command: cargo fetch
     - run:
+        name: Install nextest
+        command: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-$HOME/.cargo}/bin
+    - run:
         name: Install tools
-        command: cargo install cargo-nextest cargo-pants
+        command: cargo install cargo-pants
     - save_cargo_cache
 
 
@@ -119,7 +126,7 @@ jobs:
     - restore_rustup_cache
     - run:
         name: Run tests
-        command: cargo nextest run --profile ci --color always
+        command: cargo nextest run --profile ci
     - run:
         name: Preprocess JUnit file
         command: cat target/nextest/ci/junit.xml | circleci-junit-fix > fixed-report.xml
@@ -134,7 +141,7 @@ jobs:
     - restore_rustup_cache
     - run:
         name: Run rustfmt
-        command: cargo --color always fmt -- --check
+        command: cargo fmt -- --check
     - save_cargo_cache
     
   clippy:
@@ -145,7 +152,7 @@ jobs:
     - restore_rustup_cache
     - run:
         name: Run Clippy
-        command: cargo --color always clippy
+        command: cargo clippy
     
   build:
     <<: *default
@@ -155,7 +162,7 @@ jobs:
     - restore_rustup_cache
     - run:
         name: Build binary
-        command: cargo --color always build --release
+        command: cargo build --release
   
   pants:
     <<: *default_medium
