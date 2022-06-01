@@ -143,14 +143,14 @@ jobs:
         command: cargo --color always clippy
     - save_cargo_cache
     
-  build-release:
+  build:
     <<: *default
     steps:
     - checkout
     - restore_cargo_cache
     - restore_rustup_cache
     - run:
-        name: Build in release mode
+        name: Build binary
         command: cargo --color always build --release
     - save_cargo_cache
         
@@ -165,5 +165,5 @@ workflows:
     - test: { requires: [install_rust] }
     - format: { requires: [install_rust] }
     - clippy: { requires: [install_rust] }
-    - build-release: { requires: [install_rust] }
+    - build: { requires: [install_rust] }
   
