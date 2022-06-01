@@ -73,7 +73,7 @@ jobs:
         name: Show rustup home
         command: rustup show home
     - run:
-        name: Show selected toolchain
+        name: Show and install selected toolchain
         command: rustup show
     - save_rustup_cache
 
