@@ -56,7 +56,7 @@ commands:
   restore_cargo_cache:
     steps:
     - restore_cache:
-        name: Restoring cargo cache
+        name: Restoring cargo registry cache
         keys:
           - cargo-lock-v2-{{ checksum "Cargo.lock" }}
           - cargo-lock-v2-
@@ -66,7 +66,7 @@ commands:
         name: Saving cargo cache
         key: cargo-lock-v2-{{ checksum "Cargo.lock" }}
         paths:
-          - ~/.cargo
+          - ~/.cargo/registry
 
 jobs:
   setup:
@@ -99,9 +99,6 @@ jobs:
     - run:
         name: Download dependencies
         command: cargo fetch
-    - run:
-        name: Install tools
-        command: cargo install cargo-pants
     - save_cargo_cache
 
 
@@ -152,7 +149,6 @@ jobs:
     - run:
         name: Run rustfmt
         command: cargo fmt -- --check
-    - save_cargo_cache
     
   clippy:
     <<: *default
@@ -178,8 +174,19 @@ jobs:
     <<: *default_medium
     steps:
     - checkout
-    - restore_cargo_cache
-    - restore_rustup_cache
+    - restore_cache:
+        name: Restoring cargo pants cache
+        keys:
+          - v1-cargo-pants-{{ checksum "~/.cargo/bin/cargo-pants" }}
+          - v1-cargo-pants-
+    - run:
+        name: Install tools
+        command: cargo install cargo-pants
+    - save_cache:
+        name: Saving cargo pants cache
+          - v1-cargo-pants-{{ checksum "~/.cargo/bin/cargo-pants" }}
+        paths:
+          - ~/.cargo
     - run:
         name: Run cargo pants
         command: cargo pants --louds
