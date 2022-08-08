@@ -9,6 +9,13 @@ readme = "README.md"
 categories = ["command-line-utilities"]
 keywords = ["explode"]
 
+[[bin]]
+name = "explode"
+path = "src/main.rs"
+test = false
+bench = false
+
+
 [dependencies]
 clap = { version = "3.1.18", features = ["derive"] }
 color-eyre = { version = "0.6.1", default-features = false }
